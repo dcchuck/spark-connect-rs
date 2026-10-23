@@ -10,6 +10,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         file_paths.push(entry.to_str().unwrap().to_string());
     }
 
+    // `read_dir` order is filesystem-dependent (ext4 hashes directory entries
+    // with a per-filesystem seed), and protoc emits the generated code in input
+    // order, so sort for byte-identical output across machines.
+    file_paths.sort();
+
     #[cfg(feature = "wasm")]
     let transport = false;
     #[cfg(not(feature = "wasm"))]
